@@ -14,5 +14,3 @@ export const SearchBar = () => (
     </form>
   </div>
 );
-
-SearchBar.propTypes = {};
