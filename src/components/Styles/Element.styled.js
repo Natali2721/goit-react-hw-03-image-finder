@@ -4,9 +4,10 @@ const Box = styled.main`
 
   flex-direction: column;
   align-items: center;
+  padding-bottom: 64px;
 `;
 
-const SearchBox = styled.div`
+const SearchBox = styled.header`
   width: 100%;
   top: 0;
   left: 0;
@@ -94,5 +95,38 @@ const P = styled.p`
   margin-top: ${p => p.theme.space[2]}px;
   margin-bottom: ${p => p.theme.space[3]}px;
 `;
+const Gallery = styled.ul`
+  padding-top: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 20px;
+  list-style: none;
+`;
 
-export { Box, SearchBox, P, Form, ButtonIcon, Input, Button };
+const GalleryItem = styled.li`
+  display: block;
+  flex-basis: calc((100% - 60px) / 4);
+  height: auto;
+  overflow: hidden;
+`;
+
+const Img = styled.img`
+  display: block;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+`;
+
+export {
+  Img,
+  Box,
+  SearchBox,
+  P,
+  Form,
+  ButtonIcon,
+  Input,
+  Button,
+  Gallery,
+  GalleryItem,
+};
