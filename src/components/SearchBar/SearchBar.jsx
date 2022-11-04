@@ -1,16 +1,25 @@
+import {
+  ButtonIcon,
+  Form,
+  Input,
+  SearchBox,
+} from 'components/Styles/Element.styled';
 import React from 'react';
+import { BsSearch } from 'react-icons/bs';
 //import PropTypes from 'prop-types';
 
 export const SearchBar = () => (
-  <div>
-    <form className="search-form" id="search-form">
-      <input
+  <SearchBox>
+    <Form id="search-form">
+      <ButtonIcon type="submit">
+        <BsSearch />
+      </ButtonIcon>
+      <Input
         type="text"
-        name="searchQuery"
-        autoComplete="off"
-        placeholder="Search images..."
+        autocomplete="off"
+        autofocus
+        placeholder="Search images and photos"
       />
-      <button type="submit">Search</button>
-    </form>
-  </div>
+    </Form>
+  </SearchBox>
 );
