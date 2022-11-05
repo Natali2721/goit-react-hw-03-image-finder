@@ -1,6 +1,6 @@
 import React from 'react';
-import { Input } from 'components/Styles/Element.styled';
 import PropTypes from 'prop-types';
+import { Input } from 'components/Styles/Element.styled';
 
 const SearchInput = ({ onChange, value }) => (
   <Input
