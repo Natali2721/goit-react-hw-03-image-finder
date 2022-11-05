@@ -2,12 +2,17 @@ import React from 'react';
 import { Gallery, GalleryItem, Img } from 'components/Styles/Element.styled';
 import PropTypes from 'prop-types';
 
-export const ImageGallery = ({ images }) => {
+export const ImageGallery = ({ images, openModal }) => {
   return (
     <Gallery>
       {images.map(image => (
         <GalleryItem key={image.id}>
-          <Img src={image.webformatURL} alt={image.tags} loading="lazy" />
+          <Img
+            src={image.webformatURL}
+            alt={image.tags}
+            onClick={() => openModal(image.largeImageURL)}
+            loading="lazy"
+          />
         </GalleryItem>
       ))}
     </Gallery>
