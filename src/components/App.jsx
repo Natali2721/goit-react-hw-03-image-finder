@@ -4,12 +4,14 @@ import { SearchBar } from './SearchBar/SearchBar';
 import { Loader } from './Loader/Loader';
 import ButtonLoadMore from './Button/Button';
 import { ImageGallery } from './ImageGallery/ImageGallery';
-import axios from 'axios';
+//import axios from 'axios';
 import React from 'react';
+import { Modal } from './Modal/Modal';
+import { fetchImages } from './Api/apiService';
 //import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-const API_KEY = '30048771-b82027b1d1dd03684fe8fb9c0';
-const QUANTITY = 12;
-axios.defaults.baseURL = 'https://pixabay.com/api';
+//const API_KEY = '30048771-b82027b1d1dd03684fe8fb9c0';
+//const QUANTITY = 12;
+//axios.defaults.baseURL = 'https://pixabay.com/api';
 
 export class App extends Component {
   state = {
@@ -17,7 +19,7 @@ export class App extends Component {
     query: '',
     items: [],
     isLoading: false,
-    imageURL: null,
+    largeImageURL: null,
     total: null,
   };
   componentDidUpdate(_, prevState) {
@@ -30,10 +32,9 @@ export class App extends Component {
     e.preventDefault();
     //console.log(this.state.query, this.state.page);
 
-    this.setState({ isLoading: true, page: 1 });
-    const response = await axios.get(
-      `/?q=${this.state.query}&key=${API_KEY}&image_type=photo&orientation=horizontal&safesearch=true&language=en&per_page=${QUANTITY}&page=1`
-    );
+    await this.setState({ isLoading: true, page: 1 });
+
+    const response = await fetchImages(this.state.query, this.state.page);
     this.setState({
       isLoading: false,
       items: response.data.hits,
@@ -41,11 +42,12 @@ export class App extends Component {
     });
   };
 
-  handleChange = e => {
+  handleQueryChange = e => {
     const { name, value } = e.currentTarget;
     this.setState({
       [name]: value,
     });
+    //e.target.reset();
   };
 
   onClickLoadMore = async () => {
@@ -53,28 +55,52 @@ export class App extends Component {
       return { page: prevState.page + 1, loading: true };
     });
 
-    const response = await axios.get(
-      `/?q=${this.state.query}&key=${API_KEY}&image_type=photo&orientation=horizontal&safesearch=true&language=en&per_page=${QUANTITY}&page=${this.state.page}`
-    );
+    const response = await fetchImages(this.state.query, this.state.page);
 
     this.setState(prevState => {
       return { items: [...prevState.items, ...response.data.hits] };
     });
   };
+
+  showModalImage = largeImageURL => {
+    const item = this.state.items.find(
+      item => item.largeImageURL === largeImageURL
+    );
+    this.setState({
+      showModal: {
+        largeImageURL: item.largeImageURL,
+        tags: item.tags,
+      },
+    });
+  };
+
+  closeModalImage = () => {
+    this.setState({ showModal: null });
+  };
+
   render() {
-    const { items, total, query } = this.state;
+    const { items, total, query, showModal } = this.state;
     return (
       <Box px={3}>
         <SearchBar
           onSubmit={this.handleSubmit}
           value={query}
-          onChange={this.handleChange}
+          onChange={this.handleQueryChange}
         />
-        {items.length > 0 ? <ImageGallery images={items} /> : null}
+        {items.length > 0 ? (
+          <ImageGallery images={items} openModal={this.showModalImage} />
+        ) : null}
         {items.length < total && (
           <ButtonLoadMore text="Load More" onClick={this.onClickLoadMore} />
         )}
         {this.state.isLoading && <Loader />}
+        {showModal && (
+          <Modal
+            largeImageUrl={showModal.largeImageURL}
+            tags={showModal.tags}
+            closeModal={this.closeModalImage}
+          />
+        )}
       </Box>
     );
   }
