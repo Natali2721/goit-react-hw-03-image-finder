@@ -5,7 +5,7 @@ import { Input } from 'components/Styles/Element.styled';
 const SearchInput = ({ onChange, value }) => (
   <Input
     type="text"
-    name="query"
+    name="inputValue"
     pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
     title="May contain only letters, apostrophe, dash and spaces. For example moon"
     required
