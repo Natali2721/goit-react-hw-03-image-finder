@@ -17,28 +17,56 @@ export class App extends Component {
   state = {
     page: 1,
     query: '',
+    inputValue: '',
     items: [],
     isLoading: false,
+    isSubmit: false,
     largeImageURL: null,
     total: null,
   };
+
   componentDidUpdate(_, prevState) {
-    if (prevState.items !== this.state.items) {
-      this.setState({ loading: false });
+    if (
+      prevState.page !== this.state.page ||
+      prevState.query !== this.state.query
+    ) {
+      return this.update();
     }
   }
 
-  handleSubmit = async e => {
+  async update() {
+    this.setState({ isLoading: true });
+    try {
+      await fetchImages(this.state.query, this.state.page).then(res => {
+        if (!res.data.hits.length) {
+          return console.log(
+            'There is no images with this request. Please, try again'
+          );
+        }
+        this.setState(prevState => {
+          return {
+            items: [...prevState.items, ...res.data.hits],
+            total: res.data.totalHits,
+          };
+        });
+      });
+    } catch (error) {
+      console.log('Error');
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  }
+
+  handleSubmit = e => {
     e.preventDefault();
-    //console.log(this.state.query, this.state.page);
+    if (this.state.inputValue === this.state.query) {
+      return;
+    }
 
-    await this.setState({ isLoading: true, page: 1 });
-
-    const response = await fetchImages(this.state.query, this.state.page);
     this.setState({
-      isLoading: false,
-      items: response.data.hits,
-      total: response.data.totalHits,
+      query: this.state.inputValue,
+      items: [],
+      total: null,
     });
   };
 
@@ -47,18 +75,11 @@ export class App extends Component {
     this.setState({
       [name]: value,
     });
-    //e.target.reset();
   };
 
-  onClickLoadMore = async () => {
-    await this.setState(prevState => {
-      return { page: prevState.page + 1, loading: true };
-    });
-
-    const response = await fetchImages(this.state.query, this.state.page);
-
+  onClickLoadMore = () => {
     this.setState(prevState => {
-      return { items: [...prevState.items, ...response.data.hits] };
+      return { page: prevState.page + 1 };
     });
   };
 
@@ -79,12 +100,12 @@ export class App extends Component {
   };
 
   render() {
-    const { items, total, query, showModal } = this.state;
+    const { items, total, showModal, inputValue } = this.state;
     return (
       <Box px={3}>
         <SearchBar
           onSubmit={this.handleSubmit}
-          value={query}
+          value={inputValue}
           onChange={this.handleQueryChange}
         />
         {items.length > 0 ? (
