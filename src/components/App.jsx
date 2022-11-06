@@ -20,7 +20,6 @@ export class App extends Component {
     inputValue: '',
     items: [],
     isLoading: false,
-    isSubmit: false,
     largeImageURL: null,
     total: null,
   };
@@ -67,6 +66,7 @@ export class App extends Component {
       query: this.state.inputValue,
       items: [],
       total: null,
+      page: 1,
     });
   };
 
